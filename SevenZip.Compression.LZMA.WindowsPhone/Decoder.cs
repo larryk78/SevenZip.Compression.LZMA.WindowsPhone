@@ -95,7 +95,9 @@ namespace SevenZip.Compression.LZMA.WindowsPhone
             lzmaDecoder.Code(inStream, outStream, compressedSize, outSize, this);
 
             TimeSpan elapsed = DateTime.Now - start;
-            Debug.WriteLine(String.Format("LZMA decompression took {0}s. for {1}/{2} bytes", elapsed.TotalSeconds, compressedSize, outSize));
+            int speed = (int)(outSize / 1024 / (int)elapsed.TotalSeconds);
+            Debug.WriteLine(String.Format("LZMA decompression took {0}s. for {1}(c.)/{2}(u.) bytes at {3}KB/s", elapsed.TotalSeconds, compressedSize, outSize, speed));
+            Debug.WriteLine("Decoder.SetProgress was called " + n + " times (max=" + max + ").");
             decoder.ReportProgress(100);
         }
 
@@ -107,7 +109,9 @@ namespace SevenZip.Compression.LZMA.WindowsPhone
         protected virtual void FreeSpaceRequired(long outSize)
         {
         }
-        
+
+        long n = 0;
+        long max = 0;
         #region ICodeProgress interface
         /// <summary>
         /// ICodeProgress callback method, used internally by SevenZip.Compression.LZMA.Decoder.
@@ -117,6 +121,8 @@ namespace SevenZip.Compression.LZMA.WindowsPhone
         {
             //Debug.WriteLine(String.Format("LZMA decompression done {0} of {1} bytes.", outProgress, outSize));
             ReportProgress((int)(100 * outProgress / outSize));
+            n++;
+            max = outProgress;
         }
         #endregion
     }

@@ -247,6 +247,10 @@ namespace SevenZip.Compression.LZMA
 				m_OutWindow.PutByte(b);
 				nowPos64++;
 			}
+
+            // larryk78: progress reporting tracker (2012-04-09)
+            int last = -1;
+
 			while (nowPos64 < outSize64)
 			{
 				// UInt64 next = Math.Min(nowPos64 + (1 << 18), outSize64);
@@ -340,9 +344,14 @@ namespace SevenZip.Compression.LZMA
 						nowPos64 += len;
 					}
 
-                    // larryk78: added call to SetProgress (2012-04-08)
+                    // larryk78: added call to SetProgress (2012-04-09)
                     if (progress != null)
-                        progress.SetProgress(-1, (long)nowPos64);
+                    {
+                        int progressPercentage = (int)(100 * (long)nowPos64 / outSize);
+                        if (progressPercentage > last)
+                            progress.SetProgress(-1, (long)nowPos64);
+                        last = progressPercentage;
+                    }
 				}
 			}
 			m_OutWindow.Flush();
