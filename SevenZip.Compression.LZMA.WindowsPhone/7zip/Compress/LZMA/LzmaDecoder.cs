@@ -339,6 +339,10 @@ namespace SevenZip.Compression.LZMA
 						m_OutWindow.CopyBlock(rep0, len);
 						nowPos64 += len;
 					}
+
+                    // larryk78: added call to SetProgress (2012-04-08)
+                    if (progress != null)
+                        progress.SetProgress(-1, (long)nowPos64);
 				}
 			}
 			m_OutWindow.Flush();

@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SevenZip.Compression.LZMA.WindowsPhone", "SevenZip.Compression.LZMA.WindowsPhone.csproj", "{1C51158D-735A-4829-9CE3-69F9FADFCB4F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "..\Test\Test.csproj", "{AB9E3385-2454-4E8C-9F2F-EC3231806061}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -13,6 +15,12 @@ Global
 		{1C51158D-735A-4829-9CE3-69F9FADFCB4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1C51158D-735A-4829-9CE3-69F9FADFCB4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1C51158D-735A-4829-9CE3-69F9FADFCB4F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB9E3385-2454-4E8C-9F2F-EC3231806061}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB9E3385-2454-4E8C-9F2F-EC3231806061}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB9E3385-2454-4E8C-9F2F-EC3231806061}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{AB9E3385-2454-4E8C-9F2F-EC3231806061}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB9E3385-2454-4E8C-9F2F-EC3231806061}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB9E3385-2454-4E8C-9F2F-EC3231806061}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
