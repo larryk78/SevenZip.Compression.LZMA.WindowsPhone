@@ -14,7 +14,7 @@ using System.Windows.Shapes;
 
 namespace SevenZip.Compression.LZMA.WindowsPhone
 {
-    public class IsolatedStorageDecoder : Decoder
+    public class IsolatedStorageDecoder : StreamDecoder
     {
         IsolatedStorageFile store;
 
@@ -24,33 +24,24 @@ namespace SevenZip.Compression.LZMA.WindowsPhone
             RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(IsolatedStorageDecoder_RunWorkerCompleted);
         }
 
-        public void DecodeAsync(string inputFile, string outputFile)
+        public void DecodeAsync(string inFile, string outFile)
         {
             store = IsolatedStorageFile.GetUserStoreForApplication();
-            IsolatedStorageFileStream inStream = new IsolatedStorageFileStream(inputFile, FileMode.Open, store);
-            DecodeAsync(inStream, outputFile);
+            IsolatedStorageFileStream inStream = new IsolatedStorageFileStream(inFile, FileMode.Open, store);
+            DecodeAsync(inStream, outFile);
         }
 
-        public void DecodeAsync(Stream inStream, string outputFile)
+        public void DecodeAsync(Stream inStream, string outFile)
         {
-            try
-            {
-                store = IsolatedStorageFile.GetUserStoreForApplication();
-                IsolatedStorageFileStream outStream = new IsolatedStorageFileStream(outputFile, FileMode.Create, store);
-                DecodeAsync(inStream, outStream);
-            }
-            catch (IsolatedStorageException ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
+            store = IsolatedStorageFile.GetUserStoreForApplication();
+            IsolatedStorageFileStream outStream = new IsolatedStorageFileStream(outFile, FileMode.Create, store);
+            DecodeAsync(inStream, outStream);
         }
 
         protected override void FreeSpaceRequired(long bytes)
         {
             if (store.AvailableFreeSpace < bytes)
-            {
                 store.IncreaseQuotaTo(store.Quota + bytes);
-            }
         }
 
         void IsolatedStorageDecoder_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)

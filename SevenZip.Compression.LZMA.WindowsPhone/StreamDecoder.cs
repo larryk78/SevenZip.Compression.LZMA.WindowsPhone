@@ -14,10 +14,10 @@ using System.Windows.Shapes;
 
 namespace SevenZip.Compression.LZMA.WindowsPhone
 {
-    public class Decoder : BackgroundWorker, ICodeProgress
+    public class StreamDecoder : BackgroundWorker, ICodeProgress
     {
         Stream outStream;
-        long outSize;
+        protected long outSize;
 
         /// <summary>
         /// Encapsulates the decompression function of the LZMA SDK; implemented as a BackgroundWorker.
@@ -26,7 +26,7 @@ namespace SevenZip.Compression.LZMA.WindowsPhone
         /// <example>
         /// using SevenZip.Compression.LZMA.WindowsPhone;
         /// ...
-        /// Decoder decoder = new Decoder();
+        /// StreamDecoder decoder = new StreamDecoder();
         /// decoder.ProgressChanged += new ProgressChangedEventHandler(decoder_ProgressChanged);
         /// decoder.RunWorkerCompleted += new RunWorkerCompletedEventHandler(decoder_RunWorkerCompleted);
         /// decoder.DecodeAsync(inStream, outStream);
@@ -41,16 +41,15 @@ namespace SevenZip.Compression.LZMA.WindowsPhone
         /// ...
         /// </example>
         /// <see cref="System.ComponentModel.BackgroundWorker"/>
-        public Decoder()
+        public StreamDecoder()
         {
-            Debug.WriteLine("Decoder initialized!");
             WorkerReportsProgress = true;
             WorkerSupportsCancellation = false;
             DoWork += new DoWorkEventHandler(decoder_DoWork);
         }
 
         /// <summary>
-        /// Starts the asynchronous LZMA decompression operation.
+        /// Starts the asynchronous LZMA decompression operation with I/O streams.
         /// </summary>
         /// <param name="inStream">The System.IO.Stream from which to read the compressed data.</param>
         /// <param name="outStream">The System.IO.Stream to which the decompressed data should be written.</param>
@@ -68,11 +67,9 @@ namespace SevenZip.Compression.LZMA.WindowsPhone
         /// <remarks>Implementation taken from LzmaAlone.cs (in the LZMA SDK).</remarks>
         void decoder_DoWork(object sender, DoWorkEventArgs e)
         {
-            Decoder decoder = (Decoder)sender;
+            StreamDecoder decoder = (StreamDecoder)sender;
             Stream inStream = (Stream)e.Argument;
-
             DateTime start = DateTime.Now;
-            decoder.ReportProgress(0);
             
             byte[] properties = new byte[5];
             if (inStream.Read(properties, 0, 5) != 5)
@@ -97,8 +94,6 @@ namespace SevenZip.Compression.LZMA.WindowsPhone
             TimeSpan elapsed = DateTime.Now - start;
             int speed = (int)(outSize / 1024 / (int)elapsed.TotalSeconds);
             Debug.WriteLine(String.Format("LZMA decompression took {0}s. for {1}(c.)/{2}(u.) bytes at {3}KB/s", elapsed.TotalSeconds, compressedSize, outSize, speed));
-            Debug.WriteLine("Decoder.SetProgress was called " + n + " times (max=" + max + ").");
-            decoder.ReportProgress(100);
         }
 
         /// <summary>
@@ -110,19 +105,14 @@ namespace SevenZip.Compression.LZMA.WindowsPhone
         {
         }
 
-        long n = 0;
-        long max = 0;
         #region ICodeProgress interface
         /// <summary>
-        /// ICodeProgress callback method, used internally by SevenZip.Compression.LZMA.Decoder.
+        /// ICodeProgress callback method, used internally by SevenZip.Compression.LZMA.Decoder. Don't call this from client code!
         /// </summary>
-        /// <remarks>This is public only because it is a callback. You do not need to call this method directly.</remarks>
-        public void SetProgress(long inProgress, long outProgress)
+        /// <remarks>May be overridden by extending classes which perform multiple background tasks.</remarks>
+        public virtual void SetProgress(long inProgress, long outProgress)
         {
-            //Debug.WriteLine(String.Format("LZMA decompression done {0} of {1} bytes.", outProgress, outSize));
             ReportProgress((int)(100 * outProgress / outSize));
-            n++;
-            max = outProgress;
         }
         #endregion
     }

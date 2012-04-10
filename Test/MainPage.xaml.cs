@@ -21,7 +21,6 @@ namespace Test
 {
     public partial class MainPage : PhoneApplicationPage
     {
-        // Constructor
         public MainPage()
         {
             InitializeComponent();
@@ -32,10 +31,47 @@ namespace Test
             IsolatedStorageFile store = IsolatedStorageFile.GetUserStoreForApplication();
             StreamResourceInfo input = Application.GetResourceStream(new Uri("/Test;component/test.lzma", UriKind.Relative));
             IsolatedStorageFileStream output = new IsolatedStorageFileStream("test.out", FileMode.Create, store);
-            Decoder d = new Decoder();
+            StreamDecoder d = new StreamDecoder();
             d.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(d_ProgressChanged);
             d.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(d_RunWorkerCompleted);
             d.DecodeAsync(input.Stream, output);
+        }
+
+        private void button2_Click(object sender, RoutedEventArgs e)
+        {
+            StreamResourceInfo input = Application.GetResourceStream(new Uri("/Test;component/test.lzma", UriKind.Relative));
+            IsolatedStorageDecoder d = new IsolatedStorageDecoder();
+            d.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(d_ProgressChanged);
+            d.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(d_RunWorkerCompleted);
+            d.DecodeAsync(input.Stream, "test2.out");
+        }
+
+        private void button3_Click(object sender, RoutedEventArgs e)
+        {
+            StreamResourceInfo input = Application.GetResourceStream(new Uri("/Test;component/test.lzma", UriKind.Relative));
+            using (IsolatedStorageFile store = IsolatedStorageFile.GetUserStoreForApplication())
+            {
+                IsolatedStorageFileStream output = new IsolatedStorageFileStream("test.lzma", FileMode.Create, store);
+                int size = 65536;
+                byte[] data = new byte[size];
+                while ((size = input.Stream.Read(data, 0, data.Length)) > 0)
+                {
+                    output.Write(data, 0, size);
+                }
+                output.Close();
+            }
+            IsolatedStorageDecoder d = new IsolatedStorageDecoder();
+            d.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(d_ProgressChanged);
+            d.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(d_RunWorkerCompleted);
+            d.DecodeAsync("test.lzma", "test3.out");
+        }
+
+        private void button4_Click(object sender, RoutedEventArgs e)
+        {
+            WebClient2IsolatedStorageDecoder d = new WebClient2IsolatedStorageDecoder();
+            d.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(d_ProgressChanged);
+            d.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(d_RunWorkerCompleted);
+            d.DecodeAsync(new Uri("http://localhost/test.lzma"), "test4.out");
         }
 
         void d_ProgressChanged(object sender, System.ComponentModel.ProgressChangedEventArgs e)
@@ -47,7 +83,7 @@ namespace Test
 
         void d_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
         {
-            MessageBox.Show("Decompression complete!");
+            ProgressText.Text = "Decompression...SUCCESS :)";
         }
     }
 }
