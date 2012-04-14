@@ -21,6 +21,10 @@ namespace Test
 {
     public partial class MainPage : PhoneApplicationPage
     {
+        int test = 0;
+        IsolatedStorageFile store;
+        IsolatedStorageFileStream output;
+
         public MainPage()
         {
             InitializeComponent();
@@ -28,9 +32,10 @@ namespace Test
 
         private void button1_Click(object sender, RoutedEventArgs e)
         {
-            IsolatedStorageFile store = IsolatedStorageFile.GetUserStoreForApplication();
+            test = 1;
+            store = IsolatedStorageFile.GetUserStoreForApplication();
             StreamResourceInfo input = Application.GetResourceStream(new Uri("/Test;component/test.lzma", UriKind.Relative));
-            IsolatedStorageFileStream output = new IsolatedStorageFileStream("test.out", FileMode.Create, store);
+            output = new IsolatedStorageFileStream("test1.out", FileMode.Create, store);
             StreamDecoder d = new StreamDecoder();
             d.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(d_ProgressChanged);
             d.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(d_RunWorkerCompleted);
@@ -39,6 +44,7 @@ namespace Test
 
         private void button2_Click(object sender, RoutedEventArgs e)
         {
+            test = 2;
             StreamResourceInfo input = Application.GetResourceStream(new Uri("/Test;component/test.lzma", UriKind.Relative));
             IsolatedStorageDecoder d = new IsolatedStorageDecoder();
             d.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(d_ProgressChanged);
@@ -48,6 +54,7 @@ namespace Test
 
         private void button3_Click(object sender, RoutedEventArgs e)
         {
+            test = 3;
             StreamResourceInfo input = Application.GetResourceStream(new Uri("/Test;component/test.lzma", UriKind.Relative));
             using (IsolatedStorageFile store = IsolatedStorageFile.GetUserStoreForApplication())
             {
@@ -68,6 +75,7 @@ namespace Test
 
         private void button4_Click(object sender, RoutedEventArgs e)
         {
+            test = 4;
             WebClient2IsolatedStorageDecoder d = new WebClient2IsolatedStorageDecoder();
             d.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(d_ProgressChanged);
             d.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(d_RunWorkerCompleted);
@@ -84,6 +92,24 @@ namespace Test
         void d_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
         {
             ProgressText.Text = "Decompression...SUCCESS :)";
+
+            if (test == 1)
+            {
+                output.Close();
+                store.Dispose();
+            }
+
+            using (IsolatedStorageFile store = IsolatedStorageFile.GetUserStoreForApplication())
+            {
+                string file = String.Format("test{0}.out", test);
+                if (!store.FileExists(file))
+                {
+                    MessageBox.Show(file + " was NOT created successfully in IsolatedStorage!");
+                    return;
+                }
+                IsolatedStorageFileStream stream = new IsolatedStorageFileStream(file, FileMode.Open, store);
+                MessageBox.Show(String.Format("File {0} is {1} bytes in length.", file, stream.Length));
+            }
         }
     }
 }

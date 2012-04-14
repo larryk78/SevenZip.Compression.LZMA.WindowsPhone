@@ -17,6 +17,7 @@ namespace SevenZip.Compression.LZMA.WindowsPhone
     public class IsolatedStorageDecoder : StreamDecoder
     {
         IsolatedStorageFile store;
+        IsolatedStorageFileStream outStream;
 
         public IsolatedStorageDecoder()
             : base()
@@ -34,7 +35,7 @@ namespace SevenZip.Compression.LZMA.WindowsPhone
         public void DecodeAsync(Stream inStream, string outFile)
         {
             store = IsolatedStorageFile.GetUserStoreForApplication();
-            IsolatedStorageFileStream outStream = new IsolatedStorageFileStream(outFile, FileMode.Create, store);
+            outStream = new IsolatedStorageFileStream(outFile, FileMode.Create, store);
             DecodeAsync(inStream, outStream);
         }
 
@@ -46,6 +47,7 @@ namespace SevenZip.Compression.LZMA.WindowsPhone
 
         void IsolatedStorageDecoder_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
         {
+            outStream.Close();
             store.Dispose();
         }
     }
