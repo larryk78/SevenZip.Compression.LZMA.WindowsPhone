@@ -49,7 +49,7 @@ namespace SevenZip.Compression.LZMA.WindowsPhone
         }
 
         /// <summary>
-        /// Starts the asynchronous LZMA decompression operation with I/O streams.
+        /// Starts the stream-to-stream asynchronous LZMA decompression operation.
         /// </summary>
         /// <param name="inStream">The System.IO.Stream from which to read the compressed data.</param>
         /// <param name="outStream">The System.IO.Stream to which the decompressed data should be written.</param>
@@ -64,6 +64,8 @@ namespace SevenZip.Compression.LZMA.WindowsPhone
         /// <summary>
         /// Internal wrapper implementation for SevenZip.Compression.LZMA.Decoder.
         /// </summary>
+        /// <exception cref="ArgumentException" />
+        /// <exception cref="InsufficientFreeSpaceException" />
         /// <remarks>Implementation taken from LzmaAlone.cs (in the LZMA SDK).</remarks>
         void decoder_DoWork(object sender, DoWorkEventArgs e)
         {
@@ -86,7 +88,23 @@ namespace SevenZip.Compression.LZMA.WindowsPhone
                     throw new ArgumentException("LZMA input data is empty/unreadable");
                 outSize |= ((long)(byte)v) << (8 * i);
             }
-            decoder.FreeSpaceRequired(outSize);
+
+            try
+            {
+                if (!decoder.FreeSpaceRequired(outSize))
+                {
+                    Exception blame = new Exception(String.Format("Sorry, {0} didn't explain what went wrong.", this.GetType()));
+                    throw new InsufficientFreeSpaceException(blame); // unknown issue; name and shame :)
+                }
+            }
+            catch (InsufficientFreeSpaceException)
+            {
+                throw; // rethrow; this is already of the correct type
+            }
+            catch (Exception ex)
+            {
+                throw new InsufficientFreeSpaceException(ex); // other known issue; convert to InsufficientFreeSpaceException
+            }
 
             long compressedSize = inStream.Length - inStream.Position;
             lzmaDecoder.Code(inStream, outStream, compressedSize, outSize, this);
@@ -97,12 +115,30 @@ namespace SevenZip.Compression.LZMA.WindowsPhone
         }
 
         /// <summary>
+        /// Thrown when decompression would produce more data than can be handled by the target storage location.
+        /// </summary>
+        /// <remarks>Examine InnerException for the specific reason for failure.</remarks>
+        public class InsufficientFreeSpaceException : Exception
+        {
+            public InsufficientFreeSpaceException(Exception innerException)
+                : this("An error occurred while attempting to ensure sufficient space for decompression.", innerException)
+            {
+            }
+
+            public InsufficientFreeSpaceException(string message, Exception innerException)
+                : base(message, innerException)
+            {
+            }
+        }
+
+        /// <summary>
         /// Called after reading the LZMA header and before starting decompression.
         /// </summary>
         /// <param name="outSize">Number of bytes that will be written to the outStream.</param>
         /// <remarks>Intended to be overridden by extending classes to handle free space requirements.</remarks>
-        protected virtual void FreeSpaceRequired(long outSize)
+        protected virtual bool FreeSpaceRequired(long outSize)
         {
+            return true;
         }
 
         #region ICodeProgress interface
