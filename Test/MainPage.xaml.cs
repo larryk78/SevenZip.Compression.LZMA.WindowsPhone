@@ -79,7 +79,7 @@ namespace Test
             WebClient2IsolatedStorageDecoder d = new WebClient2IsolatedStorageDecoder();
             d.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(d_ProgressChanged);
             d.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(d_RunWorkerCompleted);
-            d.DecodeAsync(new Uri("http://localhostx/test.lzma"), "test4.out");
+            d.DecodeAsync(new Uri("http://localhost/test.lzma"), "test4.out");
         }
 
         void d_ProgressChanged(object sender, System.ComponentModel.ProgressChangedEventArgs e)
