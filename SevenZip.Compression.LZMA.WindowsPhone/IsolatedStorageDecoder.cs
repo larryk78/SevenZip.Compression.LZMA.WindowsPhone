@@ -72,8 +72,10 @@ namespace SevenZip.Compression.LZMA.WindowsPhone
         /// </summary>
         void IsolatedStorageDecoder_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
         {
-            outStream.Close();
-            store.Dispose();
+            if (outStream != null)
+                outStream.Close();
+            if (store != null)
+                store.Dispose();
         }
     }
 }

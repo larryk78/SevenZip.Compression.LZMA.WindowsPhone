@@ -79,7 +79,7 @@ namespace Test
             WebClient2IsolatedStorageDecoder d = new WebClient2IsolatedStorageDecoder();
             d.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(d_ProgressChanged);
             d.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(d_RunWorkerCompleted);
-            d.DecodeAsync(new Uri("http://localhost/test.lzma"), "test4.out");
+            d.DecodeAsync(new Uri("http://localhostx/test.lzma"), "test4.out");
         }
 
         void d_ProgressChanged(object sender, System.ComponentModel.ProgressChangedEventArgs e)
@@ -91,8 +91,14 @@ namespace Test
 
         void d_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
         {
-            ProgressText.Text = "Decompression...SUCCESS :)";
-
+            if (e.Error != null)
+            {
+                MessageBox.Show(e.Error.Message);
+                return;
+            }
+            
+            ProgressText.Text = "Decompression...OK";
+            
             if (test == 1)
             {
                 output.Close();
