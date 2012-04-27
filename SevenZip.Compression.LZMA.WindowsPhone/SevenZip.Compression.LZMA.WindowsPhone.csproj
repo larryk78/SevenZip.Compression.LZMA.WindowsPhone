@@ -61,6 +61,7 @@
     <Compile Include="7zip\Compress\RangeCoder\RangeCoderBit.cs" />
     <Compile Include="7zip\Compress\RangeCoder\RangeCoderBitTree.cs" />
     <Compile Include="7zip\ICoder.cs" />
+    <Compile Include="Resource2IsolatedStorageDecoder.cs" />
     <Compile Include="StreamDecoder.cs" />
     <Compile Include="IsolatedStorageDecoder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

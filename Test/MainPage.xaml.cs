@@ -82,6 +82,15 @@ namespace Test
             d.DecodeAsync(new Uri("http://localhost/test.lzma"), "test4.out");
         }
 
+        private void button5_Click(object sender, RoutedEventArgs e)
+        {
+            test = 5;
+            Resource2IsolatedStorageDecoder d = new Resource2IsolatedStorageDecoder();
+            d.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(d_ProgressChanged);
+            d.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(d_RunWorkerCompleted);
+            d.DecodeAsync("test.lzma", "test5.out");
+        }
+
         void d_ProgressChanged(object sender, System.ComponentModel.ProgressChangedEventArgs e)
         {
             ProgressText.Text = String.Format("Decompressing...{0}%", e.ProgressPercentage);

@@ -33,7 +33,7 @@ namespace SevenZip.Compression.LZMA.WindowsPhone
         /// <summary>
         /// Starts the URI-to-file asynchronous download and decompression operation.
         /// </summary>
-        /// <param name="inFile">The URI to the compressed file to download.</param>
+        /// <param name="inUri">The URI to the compressed file to download.</param>
         /// <param name="outFile">The path to the file (to be created) to which the decompressed data should be written.</param>
         /// <exception cref="WebClient.OpenReadAsync" />
         public void DecodeAsync(Uri inUri, string outFile)

@@ -32,6 +32,7 @@
             <Button Content="IsolatedStorageDecoder stream2file" FontSize="22" Margin="0,0,0,0" Name="button2" VerticalAlignment="Top" Click="button2_Click" />
             <Button Content="IsolatedStorageDecoder file2file" FontSize="22" Margin="0,0,0,0" Name="button3" VerticalAlignment="Top" Click="button3_Click" />
             <Button Content="WebClient2IsolatedStorageDecoder" FontSize="22" Margin="0,0,0,0" Name="button4" VerticalAlignment="Top" Click="button4_Click" />
+            <Button Content="Resource2IsolatedStorageDecoder" FontSize="22" Margin="0,0,0,0" Name="button5" VerticalAlignment="Top" Click="button5_Click" />
             <TextBlock Height="20" x:Name="ProgressText" Margin="20,0,20,0" FontSize="18"/>
             <ProgressBar x:Name="Progress" Margin="20,0,20,0" Height="10" />
         </StackPanel>
