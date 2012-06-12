@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -19,6 +20,12 @@ namespace SevenZip.Compression.LZMA.WindowsPhone
         Stream outStream;
         protected long outSize;
         protected string currentItem;
+
+        /// <summary>
+        /// Permit multiple instances to decode concurrently (default=true).
+        /// </summary>
+        public static bool AllowConcurrentDecoding = true;
+        static AutoResetEvent concurrency = new AutoResetEvent(true);
 
         /// <summary>
         /// Encapsulates the decompression function of the LZMA SDK; implemented as a BackgroundWorker.
@@ -70,6 +77,9 @@ namespace SevenZip.Compression.LZMA.WindowsPhone
         /// <remarks>Implementation taken from LzmaAlone.cs (in the LZMA SDK).</remarks>
         void decoder_DoWork(object sender, DoWorkEventArgs e)
         {
+            if (!AllowConcurrentDecoding)
+                concurrency.WaitOne(); // block until signaled
+
             StreamDecoder decoder = (StreamDecoder)sender;
             Stream inStream = (Stream)e.Argument;
             DateTime start = DateTime.Now;
@@ -113,6 +123,9 @@ namespace SevenZip.Compression.LZMA.WindowsPhone
             TimeSpan elapsed = DateTime.Now - start;
             int speed = (int)(outSize / 1024 / (int)elapsed.TotalSeconds);
             Debug.WriteLine(String.Format("LZMA decompression took {0}s. for {1}(c.)/{2}(u.) bytes at {3}KB/s", elapsed.TotalSeconds, compressedSize, outSize, speed));
+            
+            if (!AllowConcurrentDecoding)
+                concurrency.Set(); // reset signal
         }
 
         /// <summary>
