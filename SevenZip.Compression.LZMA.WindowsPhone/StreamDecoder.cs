@@ -18,6 +18,7 @@ namespace SevenZip.Compression.LZMA.WindowsPhone
     {
         Stream outStream;
         protected long outSize;
+        protected string currentItem;
 
         /// <summary>
         /// Encapsulates the decompression function of the LZMA SDK; implemented as a BackgroundWorker.
@@ -148,7 +149,7 @@ namespace SevenZip.Compression.LZMA.WindowsPhone
         /// <remarks>May be overridden by extending classes which perform multiple background tasks.</remarks>
         public virtual void SetProgress(long inProgress, long outProgress)
         {
-            ReportProgress((int)(100 * outProgress / outSize));
+            ReportProgress((int)(100 * outProgress / outSize), currentItem);
         }
         #endregion
     }

@@ -39,6 +39,7 @@ namespace SevenZip.Compression.LZMA.WindowsPhone
         public void DecodeAsync(Uri inUri, string outFile)
         {
             this.outFile = outFile;
+            currentItem = inUri.AbsoluteUri;
             webClient.OpenReadAsync(inUri); // download
         }
 
@@ -48,7 +49,7 @@ namespace SevenZip.Compression.LZMA.WindowsPhone
         /// <remarks>Download is operation 1 of 2 so the progress is 0-50, not 0-100.</remarks>
         void webClient_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
-            ReportProgress(e.ProgressPercentage / 2); // 0-50%
+            ReportProgress(e.ProgressPercentage / 2, currentItem); // 0-50%
         }
 
         /// <summary>
@@ -62,6 +63,7 @@ namespace SevenZip.Compression.LZMA.WindowsPhone
             }
             else
             {
+                currentItem = outFile;
                 base.DecodeAsync((Stream)e.Result, outFile); // decompress
             }
         }
@@ -72,7 +74,7 @@ namespace SevenZip.Compression.LZMA.WindowsPhone
         /// <remarks>Decompression is operation 2 of 2 so the progress is 50-100, not 0-100.</remarks>
         public override void SetProgress(long inProgress, long outProgress)
         {
-            ReportProgress(50 + (int)(100 * outProgress / outSize) / 2); // 50-100% progress is decompression
+            ReportProgress(50 + (int)(100 * outProgress / outSize) / 2, currentItem); // 50-100% progress is decompression
         }
     }
 }

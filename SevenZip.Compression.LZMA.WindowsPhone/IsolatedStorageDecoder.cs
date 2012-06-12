@@ -53,6 +53,7 @@ namespace SevenZip.Compression.LZMA.WindowsPhone
             if (store == null)
                 store = IsolatedStorageFile.GetUserStoreForApplication();
             outStream = new IsolatedStorageFileStream(outFile, FileMode.Create, store);
+            currentItem = outFile;
             DecodeAsync(inStream, outStream);
         }
 

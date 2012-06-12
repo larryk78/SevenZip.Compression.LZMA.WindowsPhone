@@ -41,6 +41,7 @@ namespace SevenZip.Compression.LZMA.WindowsPhone
         public void DecodeAsync(Uri inUri, string outFile)
         {
             StreamResourceInfo resource = Application.GetResourceStream(inUri);
+            currentItem = outFile;
             DecodeAsync(resource.Stream, outFile);
         }
     }
