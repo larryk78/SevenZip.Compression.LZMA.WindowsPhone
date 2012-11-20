@@ -121,8 +121,8 @@ namespace SevenZip.Compression.LZMA.WindowsPhone
             lzmaDecoder.Code(inStream, outStream, compressedSize, outSize, this);
 
             TimeSpan elapsed = DateTime.Now - start;
-            int speed = (int)(outSize / 1024 / (int)elapsed.TotalSeconds);
-            Debug.WriteLine(String.Format("LZMA decompression took {0}s. for {1}(c.)/{2}(u.) bytes at {3}KB/s", elapsed.TotalSeconds, compressedSize, outSize, speed));
+            double speed = outSize / 1024 / elapsed.TotalSeconds;
+            Debug.WriteLine(String.Format("LZMA decompression took {0}s. for {1}(c.)/{2}(u.) bytes at {3}KB/s", elapsed.TotalSeconds, compressedSize, outSize, (int)speed));
             
             if (!AllowConcurrentDecoding)
                 concurrency.Set(); // reset signal
